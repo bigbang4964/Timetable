@@ -11,6 +11,11 @@ export type Schedule = {
   period: number; // tiết học
 };
 
+export type ClassItem = {
+  id: string;
+  name: string;
+};
+
 // Lấy lịch theo lớp và tháng
 export async function getSchedules(classId?: string, month?: string): Promise<Schedule[]> {
   const q = collection(db, "schedules");
@@ -22,6 +27,18 @@ export async function getSchedules(classId?: string, month?: string): Promise<Sc
   if (month) data = data.filter((s) => s.date.startsWith(month));
 
   return data;
+}
+
+// Lấy danh sách lớp học
+export async function getClasses(): Promise<ClassItem[]> {
+  const snapshot = await getDocs(collection(db, "classes"));
+  return snapshot.docs.map((doc) => {
+  const d = doc.data();
+  return {
+    id: d.id, // hoặc doc.id nếu bạn lưu theo doc.id
+    name: d.name,
+    } as ClassItem;
+  });
 }
 
 // Kiểm tra lịch đã tồn tại
